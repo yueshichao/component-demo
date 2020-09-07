@@ -20,8 +20,8 @@
 
     <properties>
         <web.starter.version>2.1.6.RELEASE</web.starter.version>
-        <slf4j.version>1.7.26</slf4j.version>
         <swagger.version>2.7.0</swagger.version>
+        <lombok.version>1.16.18</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -32,9 +32,9 @@
                 <version>${web.starter.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>

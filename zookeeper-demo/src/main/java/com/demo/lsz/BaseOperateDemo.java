@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 @Slf4j
-public class Main {
-
-
+public class BaseOperateDemo {
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
         log.info("zookeeper demo!");
@@ -31,7 +29,7 @@ public class Main {
 
         // 2. 创建一个ZNode，节点路径，节点中存放字符串，权限设置，创建节点具体类型
         String path = zk.create("/lsz", "lsz write data...".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
-        log.info("create path = {}", path);
+        log.info("create parentPath = {}", path);
 
         // 3. exist
         Stat exists = zk.exists(path, false);

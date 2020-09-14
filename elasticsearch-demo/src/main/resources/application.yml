@@ -1,0 +1,5 @@
+server:
+  port: 9810
+
+elasticsearch:
+  host: 192.168.8.212

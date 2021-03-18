@@ -7,6 +7,7 @@
     <modules>
         <module>demo-sample</module>
         <module>zookeeper-demo</module>
+        <module>curator-demo</module>
     </modules>
 
     <parent>

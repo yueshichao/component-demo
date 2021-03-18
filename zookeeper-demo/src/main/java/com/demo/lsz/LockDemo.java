@@ -20,10 +20,10 @@ import java.util.concurrent.locks.LockSupport;
 @Slf4j
 public class LockDemo {
 
-    public static final String URL = "192.168.8.219:2181";
+    public static final String URL = "192.168.159.129:2181";
     public static final int SESSION_TIMEOUT = 5000;
     private static ZooKeeper zk;
-    // 所有锁节点的父节点，先create一下，也可以在lock时检查有没有，没有用代码create
+    // 所有锁节点的父节点，在运行前先create一下这个节点
     private static final String parentPath = "/lock";
 
     public static void main(String[] args) {

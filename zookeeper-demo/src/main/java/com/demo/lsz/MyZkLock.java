@@ -1,10 +1,10 @@
 package com.demo.lsz;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +47,8 @@ public class MyZkLock {
                 }
                 preNode = child;
             }
-            if (StringUtils.isEmpty(preNode)) {
+
+            if (StrUtil.isEmpty(preNode)) {
                 return;
             }
             log.info("wait previous node = {}", preNode);

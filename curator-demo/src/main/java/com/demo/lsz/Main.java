@@ -11,17 +11,18 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.demo.lsz.Config.ZK_URL;
+
 @Slf4j
 public class Main {
 
-    public static final String URL = "192.168.159.129:2181";
-
+    // curator的基本操作
     public static void main(String[] args) throws Exception {
 
         // 连接
         ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(1000, 3);
         CuratorFramework client = CuratorFrameworkFactory.builder()
-                .connectString(URL)
+                .connectString(ZK_URL)
                 .sessionTimeoutMs(5000)
                 .connectionTimeoutMs(5000)
                 .retryPolicy(retryPolicy)

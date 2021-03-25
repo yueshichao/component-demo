@@ -1,5 +1,6 @@
 package com.demo.lsz.controller;
 
+import cn.hutool.core.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ public class DemoController {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         log.info("demo ===> {}", sdf.format(date));
-        return "demo" + date.getTime();
+        return "demo ===> " + DateUtil.now();
     }
 
 }

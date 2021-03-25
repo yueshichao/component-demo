@@ -6,6 +6,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>demo-sample</module>
+        <module>spring-kafka</module>
     </modules>
 
     <parent>

@@ -6,6 +6,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>demo-sample</module>
+        <module>lsz-device-service</module>
+        <module>lsz-meeting-service</module>
     </modules>
 
     <parent>

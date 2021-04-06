@@ -4,3 +4,7 @@
 - zookeeper
   - 连接、创建删除ZNode等
   - 分布式锁
+  
+- kafka
+
+- elasticsearch

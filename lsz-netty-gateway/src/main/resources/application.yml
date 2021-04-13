@@ -1,0 +1,6 @@
+netty:
+  tcpPort: 8050
+  bossCount: 1
+  workerCount: 10
+  keepAlive: true
+  backlog: 100

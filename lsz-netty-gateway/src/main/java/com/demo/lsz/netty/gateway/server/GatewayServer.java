@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
 
@@ -21,7 +22,8 @@ public class GatewayServer {
 
     private Channel serverChannel;
 
-    public void start()  {
+    @PostConstruct
+    public void start() {
         try {
             ChannelFuture serverChannelFuture = serverBootstrap.bind(tcpPort).sync();
             log.info("Server is started : port {}", tcpPort.getPort());
@@ -33,7 +35,7 @@ public class GatewayServer {
 
     @PreDestroy
     public void stop() {
-        if ( serverChannel != null ) {
+        if (serverChannel != null) {
             serverChannel.close();
             serverChannel.parent().close();
         }

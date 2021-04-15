@@ -10,7 +10,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 
 /*
-* 参考：https://github.com/zbum/netty-spring-example
+* 参考：
+*
+* https://github.com/zbum/netty-spring-example
+* https://github.com/YunaiV/SpringBoot-Labs/tree/master/lab-67
 *
 * */
 

@@ -1,0 +1,45 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: sharding-jdbc-sample-demo
+  # Sharding-JDBC分片规则配置
+  shardingsphere:
+    datasource:
+      names: m1
+      m1:
+#        driver-class-name: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.0.106:3306/order_db?useUnicode=true
+        username: root
+        password: 123456
+    sharding:
+      tables:
+        t_order:
+          # 1. 数据表分片情况
+          actual-data-nodes: m1.t_order_${0..3}
+          # 2. 主键生成策略
+          key-generator:
+            column: order_id
+            type: SNOWFLAKE
+          # 3. 分片策略：分片键和分片算法
+          table-strategy.inline:
+            sharding-column: order_id
+            algorithm-expression: t_order_$->{order_id % 2 + 1}
+
+spring.shardingsphere.props.sql.show: true
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: info
+    druid.sql: debug
+
+
+

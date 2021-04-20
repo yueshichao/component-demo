@@ -6,6 +6,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>demo-sample</module>
+        <module>sharding-jdbc-single-db-horizontal-table</module>
     </modules>
 
     <parent>

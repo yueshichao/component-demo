@@ -11,8 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 
 @Slf4j
@@ -42,6 +46,13 @@ public class DaoTest {
             long userId = random.nextLong(3000);
             orderDao.insertOrder(new BigDecimal(price), userId, "success");
         }
+    }
+
+    @Test
+    public void testSelect() {
+        List<Long> orderIds = Stream.of(591599429350326273L, 591599430080135168L).collect(Collectors.toList());
+        List<Map> maps = orderDao.selectOrderByIds(orderIds);
+        System.out.println("maps = " + maps);
     }
 
 

@@ -7,6 +7,7 @@
     <modules>
         <module>demo-sample</module>
         <module>sharding-jdbc-single-db-horizontal-table</module>
+        <module>sharding-jdbc-horizontal-db</module>
     </modules>
 
     <parent>

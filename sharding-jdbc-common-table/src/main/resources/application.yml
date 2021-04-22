@@ -1,0 +1,48 @@
+server:
+  port: 9004
+
+spring:
+  application:
+    name: sharding-jdbc-sample-demo
+  # Sharding-JDBC分片规则配置
+  shardingsphere:
+    datasource:
+      names: m0, m1, m2 # 多个数据源
+      # 数据源0
+      m0:
+        driver-class-name: com.mysql.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.0.106:3306/user_db?useUnicode=true&useSSL=false
+        username: root
+        password: 123456
+      # 数据源1
+      m1:
+        driver-class-name: com.mysql.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.0.106:3306/order_db_1?useUnicode=true&useSSL=false
+        username: root
+        password: 123456
+      # 数据源2
+      m2:
+        driver-class-name: com.mysql.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.0.106:3306/order_db_2?useUnicode=true&useSSL=false
+        username: root
+        password: 123456
+    sharding:
+      broadcast-tables: t_dict
+
+spring.shardingsphere.props.sql.show: true
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: info
+    druid.sql: debug
+
+
+

@@ -9,6 +9,7 @@
         <module>sharding-jdbc-single-db-horizontal-table</module>
         <module>sharding-jdbc-horizontal-db</module>
         <module>sharding-jdbc-vertical-db</module>
+        <module>sharding-jdbc-common-table</module>
     </modules>
 
     <parent>

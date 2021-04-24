@@ -1,5 +1,5 @@
 server:
-  port: 9004
+  port: 9005
 
 spring:
   application:
@@ -7,31 +7,31 @@ spring:
   # Sharding-JDBC分片规则配置
   shardingsphere:
     datasource:
-      names: m0, m1, m2 # 多个数据源
-      # 数据源0
+      names: m0, s0 # 多个数据源
+      # 主数据源
       m0:
         driver-class-name: com.mysql.jdbc.Driver
         type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:mysql://192.168.0.106:3306/user_db?useUnicode=true&useSSL=false
+        url: jdbc:mysql://192.168.0.106:3307/user_db?useUnicode=true&useSSL=false
         username: root
         password: 123456
-      # 数据源1
-      m1:
+      # 从数据源
+      s0:
         driver-class-name: com.mysql.jdbc.Driver
         type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:mysql://192.168.0.106:3306/order_db_1?useUnicode=true&useSSL=false
+        url: jdbc:mysql://192.168.0.106:3308/user_db?useUnicode=true&useSSL=false
         username: root
         password: 123456
-      # 数据源2
-      m2:
-        driver-class-name: com.mysql.jdbc.Driver
-        type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:mysql://192.168.0.106:3306/order_db_2?useUnicode=true&useSSL=false
-        username: root
-        password: 123456
-    # 公共表/广播表配置
     sharding:
-      broadcast-tables: t_dict
+      master-slave-rules:
+        ds0:
+          master-data-source-name: m0
+          slave-data-source-names: s0
+
+      tables:
+        t_user:
+          actual-data-nodes: ds0.t_user
+
 
 spring.shardingsphere.props.sql.show: true
 

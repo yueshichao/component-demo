@@ -1,0 +1,7 @@
+[mysqld]
+## 设置server_id,注意要唯一
+server-id=101
+## 开启二进制日志功能，以备Slave作为其它Slave的Master时使用
+log-bin=mysql-slave-bin
+## relay_log配置中继日志
+relay_log=edu-mysql-relay-bin

@@ -8,6 +8,7 @@
         <module>demo-sample</module>
         <module>lsz-redis-lock</module>
         <module>lsz-redis-ratelimiter</module>
+        <module>lsz-lua-script</module>
     </modules>
 
     <parent>

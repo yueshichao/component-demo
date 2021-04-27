@@ -14,13 +14,21 @@ public class LuaMain {
     public static void main(String[] args) throws IOException {
         Config config = new Config();
         config.useSingleServer().setDatabase(0)
-                .setAddress("redis://192.168.159.129:6379");
-        RedissonClient redisson = Redisson.create(config);
+                .setAddress("redis://192.168.0.106:6379");
+        RedissonClient client = Redisson.create(config);
 
+        MyRedisLock lock = new MyRedisLock("biz", client);
+        lock.lock();
+        lock.lock();
+
+
+
+    }
+
+    public void test(RedissonClient client) {
         // test
-        Object eval = redisson.getScript().eval(RScript.Mode.READ_WRITE, "return redis.call('set', 'name', 'lsz');", RScript.ReturnType.STATUS);
+        Object eval = client.getScript().eval(RScript.Mode.READ_WRITE, "return redis.call('set', 'name', 'lsz');", RScript.ReturnType.STATUS);
         log.info("result = {}", eval);
-
     }
 
 

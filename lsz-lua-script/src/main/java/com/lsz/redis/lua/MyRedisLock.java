@@ -1,5 +1,6 @@
 package com.lsz.redis.lua;
 
+import cn.hutool.core.thread.ThreadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RScript;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+// TODO watch dog
 @Slf4j
 @RequiredArgsConstructor
 public class MyRedisLock implements Lock {
@@ -22,20 +24,29 @@ public class MyRedisLock implements Lock {
 
     private UUID uuid = UUID.randomUUID();
 
-    private int expireTime = 1000 * 1000;
+    private int expireTime = 10 * 1000;
 
 
     @Override
     public void lock() {
-        String lockId = uuid.toString() + ":" + Thread.currentThread().getId();
-        log.info("lockId = {}", lockId);
+        log.info("lockId = {} ===> pre lock", getLockId());
+        long ttl;
+        while ((ttl = acquire()) > 0) {
+            log.info("lockId = {} ===> acquire fail, ttl = {}", getLockId(), ttl);
+            ThreadUtil.sleep(ttl / 10);
+        }
+        log.info("lockId = {} ===> lock success ~ ", getLockId());
+    }
+
+    private long acquire() {
+        String lockId = getLockId();
         /*
-        * 锁流程：
-        * 先判断是否有锁，无则加锁
-        * 有则判断是否重入，重用则value + 1
-        * 不是重入则返回锁剩余时间
-        *
-        * */
+         * 锁流程：
+         * 先判断是否有锁，无则加锁
+         * 有则判断是否重入，重用则value + 1
+         * 不是重入则返回锁剩余时间
+         *
+         * */
         Object eval = client.getScript(new StringCodec()).eval(RScript.Mode.READ_WRITE,
                 "if (redis.call('exists', KEYS[1]) == 0) then\n" +
                         "    redis.call('hincrby', KEYS[1], ARGV[2], 1);\n" +
@@ -53,41 +64,32 @@ public class MyRedisLock implements Lock {
                 expireTime + "", lockId
         );
         if (eval != null) {
-            log.debug("lock, type = {}, result ===> {}", eval.getClass().getSimpleName(), eval.toString());
+            log.debug("lockId = {} ===> type = {}, result = {}", getLockId(), eval.getClass().getSimpleName(), eval.toString());
+            return (Long) eval;
         } else {
-            log.debug("lock, result ===> null");
+            log.debug("lockId = {} ===> acquire success!", getLockId());
+            return 0;
         }
     }
 
-    @Override
-    public void lockInterruptibly() throws InterruptedException {
-
-    }
-
-    @Override
-    public boolean tryLock() {
-        return false;
-    }
-
-    @Override
-    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-        return false;
+    private String getLockId() {
+        return uuid.toString() + ":" + Thread.currentThread().getId();
     }
 
     @Override
     public void unlock() {
-        String lockId = uuid.toString() + ":" + Thread.currentThread().getId();
-        log.info("lockId = {}", lockId);
+        String lockId = getLockId();
+        log.info("pre unlock ===> lockId = {}", lockId);
         /*
          * 解锁流程：
          * 先判断锁是不是自己的
          * 不是则直接不能解
          * 是则将计数减一，如果减到0则删除此key
-         * TODO
+         *
          * */
         Object eval = client.getScript(new StringCodec()).eval(RScript.Mode.READ_WRITE,
                 "if(redis.call('hexists', KEYS[1], ARGV[2]) == 0) then return nil; end\n" +
-                        "local counter = redis.call('hincry', KEYS[1], ARGV[2], 1);\n" +
+                        "local counter = redis.call('hincrby', KEYS[1], ARGV[2], -1);\n" +
                         "if(counter > 0) then\n" +
                         "    redis.call('pexpire', KEYS[1], ARGV[1]);\n" +
                         "    return 0;\n" +
@@ -100,14 +102,32 @@ public class MyRedisLock implements Lock {
                 expireTime + "", lockId
         );
         if (eval != null) {
-            log.debug("lock, type = {}, result ===> {}", eval.getClass().getSimpleName(), eval.toString());
+            log.debug("lockId = {} ===> type = {}, eval = {}", getLockId(), eval.getClass().getSimpleName(), eval.toString());
         } else {
-            log.debug("lock, result ===> null");
+            log.debug("lockId = {} ===> not your lock!", getLockId());
         }
+    }
+
+
+
+    @Override
+    public void lockInterruptibly() throws InterruptedException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean tryLock() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Condition newCondition() {
-        return null;
+        throw new UnsupportedOperationException();
     }
+
 }

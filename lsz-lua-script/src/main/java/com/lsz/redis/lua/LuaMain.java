@@ -1,5 +1,6 @@
 package com.lsz.redis.lua;
 
+import cn.hutool.core.thread.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RScript;
@@ -18,10 +19,19 @@ public class LuaMain {
         RedissonClient client = Redisson.create(config);
 
         MyRedisLock lock = new MyRedisLock("biz", client);
+        new Thread(() -> {
+            ThreadUtil.sleep(50);
+            lock.lock();
+            lock.unlock();
+        }).start();
         lock.lock();
         lock.lock();
+        ThreadUtil.sleep(1000);
+        lock.unlock();
+        lock.unlock();
 
 
+//        client.shutdown();
 
     }
 

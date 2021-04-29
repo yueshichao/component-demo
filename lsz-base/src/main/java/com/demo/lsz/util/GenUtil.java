@@ -20,9 +20,10 @@ public abstract class GenUtil {
     static AtomicInteger atomicInteger = new AtomicInteger(0);
     static Random random = new Random();
 
-
+    // 前端接不了太长的long，要么转成String传，否则用int
     public static long getId() {
         return atomicInteger.getAndIncrement();
+//        return snowflake.nextId();
     }
 
     public static double getLongitude() {

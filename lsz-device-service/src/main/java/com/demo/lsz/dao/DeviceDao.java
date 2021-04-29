@@ -21,12 +21,12 @@ public class DeviceDao {
     static {
         List<DeviceEntity> collect = Stream.of(
                 new DeviceEntity("设备1"),
+                new DeviceEntity("设备2"),
                 new DeviceEntity(),
                 new DeviceEntity(),
                 new DeviceEntity(),
                 new DeviceEntity(),
-                new DeviceEntity(),
-                new DeviceEntity("设备2")
+                new DeviceEntity("设备 final")
         ).collect(Collectors.toList());
         collect.stream().forEach(e -> map.put(e.getId(), e));
     }

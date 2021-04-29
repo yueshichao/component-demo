@@ -1,6 +1,7 @@
 package com.demo.lsz.controller;
 
 import cn.hutool.core.date.DateUtil;
+import com.demo.lsz.service.DeviceGeoPushService;
 import com.demo.lsz.dao.DeviceDao;
 import com.demo.lsz.entity.DeviceEntity;
 import com.demo.lsz.vo.ResponseMessage;
@@ -22,6 +23,15 @@ public class DeviceController {
 
     @Autowired
     DeviceDao deviceDao;
+
+    @Autowired
+    DeviceGeoPushService moveService;
+
+    @PutMapping("/move/{id}")
+    public ResponseMessage move(@PathVariable long id) {
+        DeviceEntity deviceEntity = moveService.deviceMoveRandom(id);
+        return ResponseMessage.ok(deviceEntity);
+    }
 
     @PostMapping("/add")
     public ResponseMessage<DeviceEntity> add(@RequestBody DeviceEntity entity) {

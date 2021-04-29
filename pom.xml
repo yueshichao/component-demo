@@ -8,6 +8,7 @@
         <module>demo-sample</module>
         <module>lsz-device-service</module>
         <module>lsz-meeting-service</module>
+        <module>lsz-base</module>
     </modules>
 
     <parent>

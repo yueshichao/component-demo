@@ -7,6 +7,7 @@
     <modules>
         <module>demo-sample</module>
         <module>spring-kafka</module>
+        <module>exactly-once-consume</module>
     </modules>
 
     <parent>

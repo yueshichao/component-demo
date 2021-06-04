@@ -6,13 +6,16 @@ import com.lsz.demo.kafka.controller.ProducerController;
 import com.lsz.demo.kafka.dto.MsgDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.redisson.api.RSet;
+import org.redisson.api.RScript;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 *
@@ -68,30 +71,39 @@ public class ExactlyOnceConsumer {
 
 
     private final static StringCodec codec = new StringCodec();
-    private final static String consumedKey = "consumed_id";
-    private final static String consumingKey = "consuming_id";
+    private final static String CONSUMED_KEY = "consumed_id";
+    private final static String CONSUMING_KEY = "consuming_id";
 
     // 如果已消费或正在消费，不再重复消费，返回false
     // 如果未消费，返回true
     private boolean preConsume(String msgId) {
 
-        RSet<String> consumingSet = redissonClient.getSet(consumingKey, codec);
-        RSet<String> consumedSet = redissonClient.getSet(consumedKey, codec);
-        if (consumingSet.contains(msgId) || consumedSet.contains(msgId)) {
-            return false;
-        }
-        consumingSet.add(msgId);
-        return true;
+        Long eval = redissonClient.getScript(codec).eval(RScript.Mode.READ_WRITE,
+                "if (redis.call('SISMEMBER', KEYS[1], ARGV[1]) == 0 and redis.call('SISMEMBER', KEYS[2], ARGV[1]) == 0) then\n" +
+                        "    redis.call('SADD', KEYS[1], ARGV[1]);\n" +
+                        "    return 1;\n" +
+                        "end\n" +
+                        "return 0;",
+                RScript.ReturnType.STATUS,
+                Stream.of(CONSUMING_KEY, CONSUMED_KEY).collect(Collectors.toList()),
+                msgId);
+        log.debug("class = {}, eval = {}", eval.getClass(), eval);
+        return eval == 1;
     }
 
 
-    // 还需保证原子性
+    // lua脚本保证原子性
     private void markConsumed(String msgId) {
-        RSet<String> consumingSet = redissonClient.getSet(consumingKey, codec);
-        consumingSet.remove(msgId);
 
-        RSet<String> consumedSet = redissonClient.getSet(consumedKey, codec);
-        consumedSet.add(msgId);
+        Object eval = redissonClient.getScript(codec).eval(RScript.Mode.READ_WRITE,
+                "redis.call('SREM', KEYS[1], ARGV[1]);\n" +
+                        "redis.call('SADD', KEYS[2], ARGV[1]);\n" +
+                        "return nil;",
+                RScript.ReturnType.STATUS,
+                Stream.of(CONSUMING_KEY, CONSUMED_KEY).collect(Collectors.toList()),
+                msgId);
+        log.debug("eval = {}", eval);
+
     }
 
 

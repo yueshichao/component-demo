@@ -16,4 +16,7 @@ spring:
     listener:
       ack-mode: manual_immediate
 
-
+logging:
+  level:
+    com.lsz.demo.kafka: debug
+    org.redisson: debug

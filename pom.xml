@@ -9,6 +9,7 @@
         <module>lsz-redis-lock</module>
         <module>lsz-redis-ratelimiter</module>
         <module>lsz-lua-script</module>
+        <module>redis-mysql-write</module>
     </modules>
 
     <parent>

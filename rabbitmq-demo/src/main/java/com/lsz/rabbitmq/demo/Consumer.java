@@ -1,8 +1,6 @@
 package com.lsz.rabbitmq.demo;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -10,7 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
-public class DemoMain {
+public class Consumer {
 
     private static final String QUEUE_NAME = "test_queue";
 
@@ -27,29 +25,27 @@ public class DemoMain {
         Channel channel = connection.createChannel();
         log.info("连接成功 ~ ");
 
+        // 声明接收消息
+        DeliverCallback deliverCallback = (tag, msg) -> {
+            log.info(new String(msg.getBody()));
+        };
+
+        // 取消消息时的回调
+        CancelCallback cancelCallback = (tag) -> {
+            log.info(tag);
+        };
+
         /*
-        * 生成一个队列
-        * 1. 队列名称
-        * 2. 是否持久化
-        * 3. 是否可供多个消费者消费
-        * 4. 是否自动删除
-        * 5. 其他参数
+        * 消费消息
+        * 1. 消费哪个队列
+        * 2. 消费成功后是否自动应答
+        * 3. 消费者未成功消费的回调
+        * 4. 消费者取消消费的回调
         *
         * */
-        channel.queueDeclare(QUEUE_NAME, false, false, true, null);
+        channel.basicConsume(QUEUE_NAME, true, deliverCallback, cancelCallback);
 
-
-        String msg = "hello, world";
-        /*
-        * 1. 发送到哪个交换机
-        * 2. 路由的key是哪个，本次队列的名称
-        * 3. 其他参数信息
-        * 4. 消息内容
-        * */
-        channel.basicPublish("", QUEUE_NAME, null, msg.getBytes());
-
-        log.info("消息发送完毕...");
-
+        log.info("消息接收完毕...");
 
     }
 

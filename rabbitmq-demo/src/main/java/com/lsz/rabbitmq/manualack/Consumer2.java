@@ -1,5 +1,6 @@
-package com.lsz.rabbitmq.demo;
+package com.lsz.rabbitmq.manualack;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.lsz.rabbitmq.util.MqUtil;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
@@ -12,15 +13,18 @@ import java.util.concurrent.TimeoutException;
 import static com.lsz.rabbitmq.util.MqUtil.QUEUE_NAME;
 
 @Slf4j
-public class Consumer {
+public class Consumer2 {
 
 
     public static void main(String[] args) throws IOException, TimeoutException {
         Channel channel = MqUtil.getChannel();
 
-        // 声明接收消息
+        // 快接收消息
         DeliverCallback deliverCallback = (tag, msg) -> {
-            log.info(new String(msg.getBody()));
+            log.info("应答失败：{}", new String(msg.getBody()));
+            ThreadUtil.sleep(30000);// 在这段时间内关闭进程，该消费者未消费的消息会给另一个消费者
+            // 手动应答
+//            channel.basicAck(msg.getEnvelope().getDeliveryTag(), false);
         };
 
         // 取消消息时的回调
@@ -28,17 +32,9 @@ public class Consumer {
             log.info(tag);
         };
 
-        /*
-        * 消费消息
-        * 1. 消费哪个队列
-        * 2. 消费成功后是否自动应答
-        * 3. 消费者未成功消费的回调
-        * 4. 消费者取消消费的回调
-        *
-        * */
-        channel.basicConsume(QUEUE_NAME, true, deliverCallback, cancelCallback);
+        channel.basicConsume(QUEUE_NAME, false, deliverCallback, cancelCallback);
 
-        log.info("消息者准备完毕...");
+        log.info("消费者准备完毕...");
 
     }
 

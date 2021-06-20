@@ -1,31 +1,20 @@
 package com.lsz.rabbitmq.demo;
 
+import com.lsz.rabbitmq.util.MqUtil;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
+
+import static com.lsz.rabbitmq.util.MqUtil.QUEUE_NAME;
 
 @Slf4j
 public class Producer {
 
-    private static final String QUEUE_NAME = "test_queue";
 
     public static void main(String[] args) throws IOException, TimeoutException {
-        // 配置
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("192.168.0.109");
-        factory.setUsername("admin");
-        factory.setPassword("123");
-        log.info("准备连接 ~ ");
-
-        // 连接
-        Connection connection = factory.newConnection(Executors.newFixedThreadPool(5));
-        Channel channel = connection.createChannel();
-        log.info("连接成功 ~ ");
+        Channel channel = MqUtil.getChannel();
 
         /*
         * 生成一个队列

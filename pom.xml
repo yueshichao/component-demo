@@ -8,6 +8,7 @@
         <module>demo-sample</module>
         <module>rabbitmq-demo</module>
         <module>rabbitmq-durable</module>
+        <module>rabbitmq-exchange</module>
     </modules>
 
     <parent>

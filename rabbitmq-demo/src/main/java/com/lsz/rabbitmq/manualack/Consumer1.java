@@ -21,7 +21,7 @@ public class Consumer1 {
 
         // 快接收消息
         DeliverCallback deliverCallback = (tag, msg) -> {
-            log.info("消费应答：{}", new String(msg.getBody()));
+            log.info("应答快：{}", new String(msg.getBody()));
             // 手动应答
             channel.basicAck(msg.getEnvelope().getDeliveryTag(), false);
         };
@@ -30,6 +30,11 @@ public class Consumer1 {
         CancelCallback cancelCallback = (tag) -> {
             log.info(tag);
         };
+
+        // 0 - 公平分发， 1 - 不公平分发
+        int prefetchCount = 1;
+        channel.basicQos(prefetchCount);
+
 
         channel.basicConsume(QUEUE_NAME, false, deliverCallback, cancelCallback);
 

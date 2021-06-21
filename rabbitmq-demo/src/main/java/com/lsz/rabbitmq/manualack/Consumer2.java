@@ -21,16 +21,20 @@ public class Consumer2 {
 
         // 快接收消息
         DeliverCallback deliverCallback = (tag, msg) -> {
-            log.info("应答失败：{}", new String(msg.getBody()));
+            log.info("应答慢：{}", new String(msg.getBody()));
             ThreadUtil.sleep(30000);// 在这段时间内关闭进程，该消费者未消费的消息会给另一个消费者
             // 手动应答
-//            channel.basicAck(msg.getEnvelope().getDeliveryTag(), false);
+            channel.basicAck(msg.getEnvelope().getDeliveryTag(), false);
         };
 
         // 取消消息时的回调
         CancelCallback cancelCallback = (tag) -> {
             log.info(tag);
         };
+
+        // 0 - 公平分发， 1 - 不公平分发
+        int prefetchCount = 1;
+        channel.basicQos(prefetchCount);
 
         channel.basicConsume(QUEUE_NAME, false, deliverCallback, cancelCallback);
 

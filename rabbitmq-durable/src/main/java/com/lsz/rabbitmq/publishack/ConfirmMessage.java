@@ -7,6 +7,8 @@ import com.rabbitmq.client.MessageProperties;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentNavigableMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeoutException;
 
 import static com.lsz.rabbitmq.util.MqUtil.QUEUE_NAME;
@@ -51,15 +53,30 @@ public class ConfirmMessage {
         // durable 队列持久化
         channel.queueDeclare(queueName, true, false, true, null);
 
+        /*
+         * 线程安全有序的一个哈希表
+         * 1. 监听哪些消息成功了
+         * 2. 监听哪些消息失败了
+         * */
+        ConcurrentSkipListMap<Long, String> outStandingConfirms = new ConcurrentSkipListMap<>();
+
 
         // 消息确认成功回调，multiple表示是否为批量确认
         ConfirmCallback ackCallback = (deliveryTag, multiple) -> {
+            if (multiple) {
+                ConcurrentNavigableMap<Long, String> confirmed = outStandingConfirms.headMap(deliveryTag);
+                confirmed.clear();
+            } else {
+                outStandingConfirms.remove(deliveryTag);
+            }
             log.info("消息发送成功, deliveryTag = {}, multiple = {}", deliveryTag, multiple);
         };
 
         // 消息失败回调
         ConfirmCallback nackCallback = (deliveryTag, multiple) -> {
             log.warn("消息发送失败, deliveryTag = {}, multiple = {}", deliveryTag, multiple);
+            String msg = outStandingConfirms.get(deliveryTag);
+            log.info("未确认的消息是：{}", msg);
         };
 
         channel.addConfirmListener(ackCallback, nackCallback);
@@ -67,9 +84,11 @@ public class ConfirmMessage {
         // 开启发布确认
         channel.confirmSelect();
 
+
         for (int i = 0; i < MSG_COUNT; i++) {
             String msg = "" + i;
             channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+            outStandingConfirms.put(channel.getNextPublishSeqNo(), msg);
         }
 
     }

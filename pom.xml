@@ -10,6 +10,7 @@
         <module>rabbitmq-durable</module>
         <module>rabbitmq-exchange</module>
         <module>rabbitmq-dead-message</module>
+        <module>rabbitmq-delay-queue</module>
     </modules>
 
     <parent>

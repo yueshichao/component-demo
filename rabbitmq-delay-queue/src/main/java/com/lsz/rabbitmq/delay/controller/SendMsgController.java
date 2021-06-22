@@ -26,5 +26,21 @@ public class SendMsgController {
         return DateUtil.now();
     }
 
+    @PutMapping("/send/{expireSecond}/{msg}")
+    public String send(@PathVariable Integer expireSecond, @PathVariable String msg) {
+        log.info("发送消息：{}，过期时间：{}s", msg, expireSecond);
+        rabbitTemplate.convertAndSend("X", "XC", msg, message -> {
+            // 在这设置发送消息的过期时间
+            message.getMessageProperties().setExpiration(expireSecond * 1000 + "");
+            /*
+            * 但这种方式存在问题，比如第一条消息是10s，第二条消息是1s
+            * rabbitmq只会等待第一条消息过期才会检查第二条消息，所以第二条消息是第11s发给死信队列的
+            *
+            * */
+            return message;
+        });
+        return DateUtil.now();
+    }
+
 
 }

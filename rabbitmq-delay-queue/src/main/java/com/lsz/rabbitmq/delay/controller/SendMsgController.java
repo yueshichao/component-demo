@@ -1,6 +1,7 @@
 package com.lsz.rabbitmq.delay.controller;
 
 import cn.hutool.core.date.DateUtil;
+import com.lsz.rabbitmq.delay.config.DelayQueueConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,19 @@ public class SendMsgController {
             * rabbitmq只会等待第一条消息过期才会检查第二条消息，所以第二条消息是第11s发给死信队列的
             *
             * */
+            return message;
+        });
+        return DateUtil.now();
+    }
+
+
+    @PutMapping("/v2/send/{expireSecond}/{msg}")
+    public String sendV2(@PathVariable Integer expireSecond, @PathVariable String msg) {
+        log.info("发送消息：{}，过期时间：{}s", msg, expireSecond);
+        // 发送给延迟队列
+        rabbitTemplate.convertAndSend(DelayQueueConfig.DELAY_EXCHANGE_NAME, DelayQueueConfig.DELAY_ROUTING_KEY, msg, message -> {
+            // 在这设置发送消息的过期时间
+            message.getMessageProperties().setDelay(expireSecond * 1000);
             return message;
         });
         return DateUtil.now();

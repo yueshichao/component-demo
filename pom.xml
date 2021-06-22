@@ -9,6 +9,7 @@
         <module>rabbitmq-demo</module>
         <module>rabbitmq-durable</module>
         <module>rabbitmq-exchange</module>
+        <module>rabbitmq-dead-message</module>
     </modules>
 
     <parent>

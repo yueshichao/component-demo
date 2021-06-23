@@ -26,6 +26,8 @@ public class SendMsgController {
         String id = IdUtil.simpleUUID();
         CorrelationData correlationData = new CorrelationData(id);
         rabbitTemplate.convertAndSend(ConfirmConfig.CONFIRM_EXCHANGE_NAME, ConfirmConfig.ROUTING_KEY, msg, correlationData);
+        rabbitTemplate.convertAndSend(ConfirmConfig.CONFIRM_EXCHANGE_NAME + 1, ConfirmConfig.ROUTING_KEY, msg, correlationData); // 交换机投递失败
+        rabbitTemplate.convertAndSend(ConfirmConfig.CONFIRM_EXCHANGE_NAME, ConfirmConfig.ROUTING_KEY + 1, msg, correlationData); // 队列投递失败
         log.info("发送消息内容 = {}", msg);
         return DateUtil.now();
     }

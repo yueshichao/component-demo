@@ -26,6 +26,7 @@ public class AckCallback implements RabbitTemplate.ConfirmCallback, RabbitTempla
 
     @PostConstruct
     public void init() {
+        // 当配置了备份交换机（alternate-exchange参数）时，投递失败的回调会走备份交换机
         rabbitTemplate.setConfirmCallback(this);
         rabbitTemplate.setReturnCallback(this);
     }

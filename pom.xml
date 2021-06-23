@@ -11,6 +11,7 @@
         <module>rabbitmq-exchange</module>
         <module>rabbitmq-dead-message</module>
         <module>rabbitmq-delay-queue</module>
+        <module>rabbitmq-produce-ack</module>
     </modules>
 
     <parent>

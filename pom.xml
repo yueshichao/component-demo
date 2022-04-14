@@ -6,6 +6,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>demo-sample</module>
+        <module>custom-spring-starter</module>
+        <module>custom-spring-starter-test</module>
     </modules>
 
     <parent>

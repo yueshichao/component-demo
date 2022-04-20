@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
     com.demo.lsz.autoconfigure.CustomAutoConfiguration
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+    com.demo.lsz.filter.CustomImportFilter

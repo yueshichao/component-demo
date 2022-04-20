@@ -12,4 +12,6 @@ public class CustomProperties {
 
     private String suffix = "default";
 
+    private Boolean enable = true;
+
 }

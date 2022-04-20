@@ -4,3 +4,4 @@ server:
 lsz.custom:
   prefix: "2022-04-14"
   suffix: "下午"
+  enable: false

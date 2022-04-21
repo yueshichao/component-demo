@@ -9,12 +9,12 @@ public class KafkaConfiguration {
 
     @Bean
     public NewTopic initialTopic() {
-        return new NewTopic("demoTopic",8, (short) 1 );
+        return new NewTopic("demoTopic", 8, (short) 1);
     }
 
     @Bean
     public NewTopic updateTopic() {
-        return new NewTopic("demoTopic",10, (short) 1 );
+        return new NewTopic("demoTopic", 10, (short) 1);
     }
 
 

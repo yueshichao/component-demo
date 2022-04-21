@@ -3,14 +3,13 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: 192.168.159.129:9092
+    bootstrap-servers: lsz.env.com:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
       group-id: demo
-      enable-auto-commit: true
+      enable-auto-commit: false # auto commit
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-
 

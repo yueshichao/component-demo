@@ -7,6 +7,7 @@
     <modules>
         <module>demo-sample</module>
         <module>lsz-netty-gateway</module>
+        <module>lsz-netty-chatroom</module>
     </modules>
 
     <parent>

@@ -7,6 +7,7 @@
     <modules>
         <module>demo-sample</module>
         <module>webflux-demo</module>
+        <module>factorybean-demo</module>
     </modules>
 
     <parent>

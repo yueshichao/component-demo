@@ -1,7 +1,11 @@
 package com.lsz.springwebflux.controller;
 
 import com.lsz.springwebflux.service.IdGenerator;
+import com.lsz.springwebflux.trace.MyTracer;
+import com.lsz.springwebflux.trace.MyTracerContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +17,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/flux")
+@Slf4j
 public class FluxController {
 
     @Resource(name = "idGenerator")
@@ -21,8 +26,12 @@ public class FluxController {
     @Resource
     WebClient webClient;
 
+    @Resource(name = "threadPool")
+    ThreadPoolTaskExecutor threadPool;
+
     @RequestMapping("/get/id")
     public Mono<Long> getId() {
+
         return Mono.just(idGenerator.getId());
     }
 
@@ -38,6 +47,21 @@ public class FluxController {
         return responseMono.flatMap((resp) -> {
             return resp.bodyToMono(String.class);
         });
+    }
+
+    @RequestMapping("/trace")
+    public Mono<Void> trace() {
+        MyTracer tracer = MyTracerContext.createIfAbsent();
+        try {
+            log.info("main trace = {}", tracer);
+            threadPool.execute(() -> {
+                MyTracer subTracer = MyTracerContext.createIfAbsent();
+                log.info("executor trace = {}", subTracer);
+            });
+        } finally {
+            MyTracerContext.remove();
+        }
+        return Mono.empty();
     }
 
 

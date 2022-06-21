@@ -1,0 +1,15 @@
+{
+  "size": 20,
+  "query": {
+    "match" : {
+      "app": {}
+    },
+    "range": {
+      "start": {
+        "gte": {},
+        "lte": {}
+      }
+    }
+  }
+}
+

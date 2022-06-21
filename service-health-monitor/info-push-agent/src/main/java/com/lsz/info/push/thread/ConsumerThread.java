@@ -1,9 +1,7 @@
 package com.lsz.info.push.thread;
 
-import com.alibaba.fastjson.JSON;
-import com.lsz.info.push.util.JestUtil;
+import com.lsz.info.push.service.EsService;
 import com.lsz.info.push.vo.ServiceMetric;
-import io.searchbox.client.JestClient;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,15 +11,16 @@ import java.util.concurrent.BlockingQueue;
 public class ConsumerThread extends Thread {
 
     private BlockingQueue<List<ServiceMetric>> mq;
-    private JestClient jestClient;
+    private EsService esService;
 
-    public ConsumerThread(BlockingQueue<List<ServiceMetric>> mq) {
+    public ConsumerThread(BlockingQueue<List<ServiceMetric>> mq, EsService esService) {
         this.mq = mq;
-        this.jestClient = JestUtil.getJestClient();
+        this.esService = esService;
     }
 
     @Override
     public void run() {
+        log.info("消费者线程启动...");
         while (true) {
             try {
                 List<ServiceMetric> poll = mq.take();
@@ -33,8 +32,8 @@ public class ConsumerThread extends Thread {
     }
 
     private void push(List<ServiceMetric> metrics) {
-        log.info("metrics = {}", JSON.toJSONString(metrics));
-
+//        log.info("metrics = {}", JSON.toJSONString(metrics));
+        esService.push(metrics);
     }
 
 

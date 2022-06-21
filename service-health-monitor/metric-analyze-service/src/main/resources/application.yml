@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: metric-analyze-service
+
+  redis:
+    host: lsz.env.com
+    port: 6379
+
+  elasticsearch:
+    jest:
+      uris: lsz.env.com:9200
+
+lsz:
+  es:
+    index: metric
+    type: my_doc

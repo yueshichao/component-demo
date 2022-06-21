@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>info-push-agent</module>
+        <module>metric-analyze-service</module>
     </modules>
 
 

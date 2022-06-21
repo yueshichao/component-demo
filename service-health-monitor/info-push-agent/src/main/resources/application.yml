@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: info-push-agent
+
+  redis:
+    host: lsz.env.com
+    port: 6379
+
+lsz:
+  es:
+    index: metric
+    type: my_doc
